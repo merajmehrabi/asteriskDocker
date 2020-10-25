@@ -1,0 +1,26 @@
+version: "2.0"
+
+services:
+    asterisk:
+        build: .
+        hostname: 'asterisk'
+        cap_add:
+          - NET_ADMIN
+          - NET_RAW
+        environment:
+          - ASTERISK_USER=root
+        volumes:
+          - ./asterisk:/etc/asterisk
+          - ./monitor:/var/spool/asterisk/monitor
+        networks:
+          myvlan:
+            ipv4_address: ${ASTERISK_IP}
+networks:
+  myvlan:
+    driver: macvlan
+    driver_opts:
+      parent: ens160
+    ipam:
+      config:
+       - subnet: ${ASTERISK_SUBNET}
+         gateway: ${ASTERISK_GATEWAY}
